@@ -1,6 +1,6 @@
 # Principles of Data Science
 
-**NOTE**:grey_exclamation: 
+**Note**:grey_exclamation: 
 
 Some `pdf` files come with `Rmd` (R Markdown) source code files while others do not. The `Rmd` files are added as supplementary material. For those unfamiliar with R Markdown, the source code is converted into a `pdf` file which contains the final, well-formatted and fully visualized work. 
 
@@ -42,7 +42,7 @@ Files inside this folder relate to creation of many types of stastical models to
 
 :file_folder: `Machine Learning/`
 
-Files inside relate to both Machine Learning as well as in-depth results of multiple linear regression. The packages used for this section were `glmnet`, `rpart`, `rpart.plot` and `mdsr` 
+Files inside relate to both Machine Learning as well as in-depth results of multiple linear regression. The packages used for this section were `glmnet`, `rpart`, `rpart.plot` and `mdsr`. 
 
 
 
