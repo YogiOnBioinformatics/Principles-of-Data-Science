@@ -14,3 +14,8 @@ Work done for University of Pittsburgh course "Principles of Data Science" (STAT
 3. `Multiple Statistical Models and Bootstrapping` 
 
 4. `Machine Learning` 
+
+
+**Folders** 
+
+::file_folder
