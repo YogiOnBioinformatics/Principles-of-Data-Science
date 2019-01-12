@@ -1,0 +1,44 @@
+---
+title: "Data-Driven Model Selection by Cross Validation"
+author: "Yogindra Raghav"
+date: "December 5, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning = FALSE, message = FALSE}
+
+library(mdsr)
+library(broom)
+
+```
+
+1. Sum of Squared Errors: 
+
+```{r}
+
+
+mod = lm(mpg~. , data = mtcars)
+residuals = augment(mod, mtcars) %>% select(.resid) 
+residuals^2 %>% sum()
+
+```
+
+
+2. Coefficients that are significantly different from zero: 
+
+```{r}
+
+summary(mod)
+
+```
+
+According to the p-values, none of the coefficients are significantly differ from zero. 
+
+
+3. Row numbers for the first partition for the training data are rows 1-4,6-8, 10-16, 18-19, 21-26, 30-32.
+
+4. Based on the SSE value from cross-validation, we get 593. However, in excercise 1 we got an SSE of 147.4944. 

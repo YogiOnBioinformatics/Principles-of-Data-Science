@@ -1,0 +1,57 @@
+---
+title: "Data Visualization with ggplot"
+author: "Yogindra Raghav"
+date: "September 28, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+library(mdsr)
+library(mosaic)
+
+```
+
+```{r}
+Binary_medv = with(MASS::Boston, ifelse(medv >25, "rich", "not so"))
+Binary_medv
+```
+
+
+```{r}
+
+ggplot(data = Galton)+ geom_point(mapping = aes(x = height, y = father))
+```
+
+
+
+```{r}
+ ggplot(data = Galton)+ geom_point(mapping = aes(x = height, y = father)) +
+facet_grid(~sex)
+```
+
+
+
+```{r}
+ggplot(data = Galton)+ geom_point(mapping = aes(x = height, y = father))+ 
+geom_smooth(method = "lm", mapping = aes(x = height, y = father))
+```
+
+
+
+
+```{r}
+ggplot(data = MLB_teams)+ geom_point(mapping = aes(x = W, y =L)) + facet_grid(~lgID)
+```
+
+
+
+
+```{r}
+ggplot(data = MLB_teams) + geom_point(mapping = aes(x = payroll, y = WPct))+
+geom_smooth(method = "lm", mapping = aes(x = payroll, y= WPct))
+```

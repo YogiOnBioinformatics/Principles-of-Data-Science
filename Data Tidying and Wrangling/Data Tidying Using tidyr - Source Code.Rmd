@@ -1,0 +1,96 @@
+---
+title: "Data Tidying Using tidyr"
+author: "Yogindra Raghav"
+date: "October 26, 2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, warning = FALSE}
+
+library(dplyr)
+library(tidyr)
+
+pew <- tbl_df(read.csv("C:/Users/Yogindra Raghav/Downloads/pew.csv", stringsAsFactors = FALSE, check.names = FALSE))
+
+
+pew %>% 
+  gather(key = income, value = frequency, '<$10k':'$10-20k':'$20-30k':'$30-40k':'$40-50k':'$50-75k':'$75-100k':'$100-150k':'>150k':"Don't know/refused")
+
+```
+
+
+
+
+```{r}
+
+tidy4b <- table4b %>% 
+  gather(key = year, value = population, '1999':'2000')
+tidy4b
+
+```
+
+
+
+
+
+```{r}
+
+tidy4a <- table4a %>% 
+  gather(key = year, value = case, '1999':'2000')
+
+tidy4a %>% left_join(tidy4b) %>%
+arrange(country)
+
+```
+
+
+
+
+
+```{r}
+
+stocks <- tibble(
+  year   = c(2015, 2015, 2016, 2016),
+  half  = c(   1,    2,     1,    2),
+  return = c(1.88, 0.59, 0.92, 0.17)
+)
+
+stocks %>%  spread( key = half, value = return)
+
+```
+
+
+
+We need to gather this data set based on "sex". The variables are "pregnant" and "sex". 
+
+```{r}
+
+pregnant <- tribble(
+  ~pregnant, ~male, ~female,
+  "yes",     NA,    10,
+  "no",      20,    12
+)
+
+
+pregnant %>% 
+  gather(key = sex, value = n, 'male':'female')
+
+
+```
+
+
+
+
+```{r}
+
+table5 %>% 
+  unite(year, century, year, sep = "") %>%
+  separate(rate, into = c("cases", "population"), sep = "/", convert = TRUE) %>%
+  separate(year, into = c("year"), convert=TRUE)
+
+```

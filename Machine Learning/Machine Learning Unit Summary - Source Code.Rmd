@@ -1,0 +1,150 @@
+---
+title: "Machine Learning Unit Summary"
+author: "Yogindra Raghav"
+date: "December 7, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Load all the necessary packages.
+
+```{r,message=FALSE, warning = FALSE}
+library(NHANES)
+library(dplyr)
+library(mdsr)
+library(glmnet)
+library(rpart)
+library(rpart.plot)
+```
+
+Package `NHANES` contains survey data collected by the US National Center for Health Statistics (NCHS) which has conducted a series of health and nutrition surveys since the early 1960's. Since 1999 approximately 5,000 individuals of all ages are interviewed in their homes every year and complete the health examination component of the survey. The health examination is conducted in a mobile examination centre (MEC).
+
+### Marijuana $\implies$ hard drugs?
+Are people who have tried marijuana more likely to use hard drugs? In the `NHANES` data set, the variable `Marijuana` and `HardDrugs` are defined as follows:
+
+  - `Marijuana`: Participant has tried marijuana. Reported for participants aged 18 to 59 years as Yes or No.
+  
+  - `HardDrugs`: Participant has tried cocaine, crack cocaine, heroin or methamphetamine. Reported for participants aged 18 to 69 years as Yes or No.
+  
+To simplify the problem, we will only use 7 variables (predictors) in the data set:
+
+Gender, HealthGen, Depressed, SleepHrsNight, AlcoholDay, SmokeNow, Marijuana. 
+
+You may use `?NHANES` to check the definition of each variable.
+
+Models that you should build are:
+
+- Logistic regression model
+- Decision tree
+
+#### Step 1: Select the variables and remove observations of missing values
+
+```{r}
+data1<- NHANES %>%
+  select(HardDrugs,Gender,HealthGen,Depressed,SleepHrsNight,AlcoholDay, SmokeNow, Marijuana) %>% 
+  na.omit()
+glimpse(data1)
+```
+
+#### Step 2: Create a distribution table for `HardDrugs`.
+Show percentage of each category.
+
+```{r}
+
+tally(~HardDrugs, data = NHANES, format = "percent")
+
+
+```
+
+#### Step 3: Split the data to training and testing sets.
+Just as what we have done before, 80% training and 20% testing.
+
+```{r}
+set.seed(99)
+train1 <- data1 %>% sample_frac(size = 0.8)
+test1 <- data1 %>% setdiff(train1)
+```
+
+
+##### Model 1. Logistic Regression Model
+We will do a regularized logistic regression model. So, first, use the `glmnet` package to find the `optimal` lambda value through cross-valuation ($k=10$, default). Plot the fit result of cross-valuation.
+
+```{r,message=FALSE,warning=FALSE}
+
+formula = as.formula("HardDrugs~ Gender + HealthGen + Depressed + SleepHrsNight + AlcoholDay + SmokeNow + Marijuana")
+
+predictors = model.matrix(formula, data = train1)
+
+fit = cv.glmnet(predictors, train1$HardDrugs, family = "binomial", type = "class")
+
+fit
+
+plot(fit)
+
+```
+
+In the output, `cvm` is the mean cross-validated error -- a vector of length `length(lambda)`; `lambda.min` is the value of lambda that gives minimum cvm. `lambda.1se` is the largest value of lambda such that error is within 1 standard error of the minimum.
+
+#### Question: 
+1. What is the 'optimal' lambda based on the cross-validation?
+
+```{r}
+
+fit$lambda.min
+
+```
+
+
+Let us use the 'optimal' value of lambda to regulate the logistic regression model. 
+
+```{r}
+
+regulated = glmnet(predictors, train1$HardDrugs, family = "binomial", lambda = fit$lambda.min)
+
+regulated$beta
+
+```
+
+Now, fit a logistic regression model without regulation. 
+```{r}
+mod_lr2 <- glm(HardDrugs~Gender+Depressed+AlcoholDay+SmokeNow+Marijuana, data=train1,family=binomial)
+summary(mod_lr2)
+```
+
+#### Questions:
+2. From the output of the final model, which variable is the most significant?
+
+"Marijuana" is the variable that is most significant based on output from final model. 
+
+3. What is the relationship between `Marijuana` and `HardDrugs`? Describe it in terms of direction and strength.
+
+The relationship/correlation between "Marijuana" and "HardDrugs" is a strong and positive one. 
+
+4. Males or Female are more likely to use hard drugs?
+
+Males are more likely to use hard drugs. 
+
+##### Model 2: Decision Tree 
+```{r,warning=FALSE,message=FALSE}
+
+tree = rpart(formula, data = train1)
+
+rpart.plot(tree)
+
+```
+
+From the decision tree, what conclusion can you make? In particular, answer the following questions:
+
+5. Which one seems to be the most important factor among the 7 predictors?
+
+Among the 7 predictors, "Marijuana" usage seems to be the most important factor. 
+
+6. Do you think people who have tried Marijuana are more likely to try hard drugs, such as cocaine, heroin, etc.?
+
+Yes, I do personally believe that people who have tried Marijuana are more likely to try hard drugs, such as cocaine, heroine, etc.
+
+

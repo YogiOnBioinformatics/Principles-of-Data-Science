@@ -1,0 +1,121 @@
+---
+title: 'Data Wrangling and Tidying Unit Summary'
+date: "10/26/2018"
+author: "Yogindra Raghav"
+output: 
+  pdf_document:  
+     fig_caption: yes
+     fig_crop: no
+     fig_height: 2
+     fig_width: 3 
+  html_document: default
+fontsize: 11pt
+geometry: margin=0.7in
+---
+
+```{r setup, message=FALSE, warning = FALSE}
+library(tidyverse)
+```
+
+#### Problem 1: Tidy Data
+
+The following data set will be used to investigate whether Boy scout 
+experience lowers the delinquency rate. The numeric values represent the count of boys in each category. The column `Social` stands for ``Socioeconomic status". 
+    
+```{r, echo = FALSE}
+set.seed(101)
+df<-data.frame(c('High','High','Low','Low'),c('Yes','No','Yes','No'),rpois(4,20),rpois(4,13))
+names(df)<-c('Social','Boyscout','Delinquent.Y','Delinquent.N')
+print(df)
+```
+
+a. The dataset is not tidy. Why is that?
+
+The data set is wide and does not contain one observation per row. 
+
+b. Tranform the data set into narrow format. 
+
+```{r}
+df %>% gather("Delinquent", "cases", 3:4)
+
+```
+
+
+#### Problem 2: Data wrangling -- One Table
+Load the `nycflights13` package. In the `flights` data set, find the top 5 carriers (airlines) which have the worst average arrival delays. You should only consider the positive arrival delays. Make sure you only select variables that are necessary solve this problem. Otherwise, the table will be too wide. 
+
+```{r}
+library(nycflights13)
+
+flights %>% filter(arr_delay>-1) %>% select(carrier, arr_delay) %>% group_by(carrier) %>% summarise(average_arrival_delay = mean(arr_delay)) %>% arrange(desc(average_arrival_delay)) %>% head(5)
+
+```
+
+#### Problem 3: Data wrangling -- One Table
+Table 1 contains information about TB cases in three different counties in 1999 and 2000. 
+```{r}
+table1
+```
+
+a. Calculate the proportion of TB in each country in each year.
+
+```{r}
+table1 %>% mutate(prop_TB = cases/population)
+
+```
+
+b. Expand the table from part a to a wide table, namely list 1999 and 2000 proportion of TB in separate columns. Note that you should only keep country, year and proportion before you spread the table.
+
+```{r}
+
+table1 %>% mutate(prop_TB = cases/population) %>% spread(year, prop_TB)
+
+```
+
+c. Create a new variable which is the percentage change in TB proportion from 1999 to 2000. Note that 1999 and 2000 are non-syntactic names (because they don't start with a letter) so we have to surround them in backticks in your R code. For example, ` ` `1999` ` `.
+
+
+
+
+
+
+
+
+
+
+#### Problem 4: Data wrangling -- Two Tables
+
+Suppose that we have two rectangular arrays of data, labeled `students` and `houses`.
+[In R terminology, they are `data.frames`.] `students` contains information about individual students (e.g. her
+student id, name, date of birth, class year, campus house, etc.). 
+Each row in students contains data about one student. `houses` contains data about houses (e.g. house name,
+capacity, street address, etc.). Each row in houses contains data about one house.
+Suppose further that we want to generate a student address book. The address book will
+consist of two columns of data: the first column will contain the student's name; and the
+second will be the address where she lives.
+
+
+a. Describe, in words, a data management operation that you could perform in order to
+achieve this. Be as specific as you can about what the operation will do and how it must
+be specified, but note that you do not have to write or reference R code!
+
+Left_join() the 'students' data set with the 'houses' data set. You join it with the house name. Once you join the tables by the house name, use select() to select for the student name and address of the house.
+ 
+b. It is important that every student appears in the address book, regardless of whether she
+lives on campus. Would a `inner_join()`, `left_join()`, `right_join()` or `full_join()` be most appropriate?
+Explain why.
+
+
+Assuming that you give the "students" table first to R, then a left_join() would be most appropriate since it will guarantee that all entries in "students" are found in the joined table even if they cannot be matched to an entry in the "houses" table.
+
+c. Suppose now that only students from the Class of 2014 are to be included in the address
+book. What additional data management operation could you perform to achieve this?
+Again, be specific, but there is no need to write code.
+
+Perform a left_join() as before and then filter() for "Class of 2014". Once that is done you can select() for the name and address. 
+
+
+
+
+
+

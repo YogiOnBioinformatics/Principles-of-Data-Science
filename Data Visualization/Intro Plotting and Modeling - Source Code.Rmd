@@ -1,0 +1,65 @@
+---
+title: "Introduction to Plotting and Model Creation"
+author: "Yogindra Raghav"
+date: "September 20, 2018"
+output: pdf_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("plotrix")
+dat<-read.table("C:/Users/Yogindra Raghav/Downloads/mtmv_data_10_12.csv", header = TRUE,
+                sep = ",")
+attach(dat)
+```
+
+This chunk of code reads the data in by allowing users to choose csv file and then uses attach() function for easier access of column headers. 
+
+```{r, eval = TRUE}
+model_namebi<-lm(vote_share~mshare)
+m10<-lm(vote_share~mshare)
+a10<-m10$coefficients[1]
+b10<-m10$coefficients[2]
+
+m12<-lm(vote_share_12~mshare_12)
+a12<-m12$coefficients[1]
+b12<-m12$coefficients[2]
+plot(mshare,vote_share, pch=20, cex=1.0, ylim=c(0, 100), xlab="Tweet Share", 
+     ylab="Vote Share")
+
+abline(a10, b10, lwd=2, col=2)
+
+``` 
+
+This code runs the simple linear regression model for a given data set using the lm() function which stands for linear model. 
+
+These lines are responsible for first making the scatter plot using the plot() function and then adding a line to a plot with the abline() function. 
+
+
+
+ORIGINIAL FROM MDSR BOOK: 
+
+```{r results = "asis", warning = FALSE}
+library(xtable) 
+library(mdsr) 
+options(xtable.comment= FALSE) 
+mod = lm(cesd ~ mcs + sex, data = HELPmiss) 
+xtable(mod) 
+```
+
+
+MY OWN ANALYSIS USING IRIS DATASET: 
+
+```{r results = "asis", warning = FALSE}
+
+options(xtable.comment= FALSE)
+mod = lm(Sepal.Length~Petal.Length, data = iris)
+xtable(mod)
+```
+
+
+
